@@ -24,10 +24,14 @@ Box.prototype.setTranslate = function(x, y) {
 }
 
 //TODO: Aplicar matriz de rotação
-Box.prototype.setRotate = function(theta) {}
+Box.prototype.setRotate = function(theta) {
+    this.R = rotate(theta);
+}
 
 //TODO: Aplicar matriz de escala
-Box.prototype.setScale = function(x, y) {}
+Box.prototype.setScale = function(x, y) {
+    this.S = scale(x,y);
+}
 
 Box.prototype.draw = function(canvas = ctx) { //requer o contexto de desenho
     //pega matriz de tranformação de coordenadas canônicas para coordenadas do canvas
