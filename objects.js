@@ -11,9 +11,8 @@ function Box(center = [0, 0, 1], height = 50, width = 50) {
     this.S = identity(); //matriz 3x3 de escala
     this.fill = white; //cor de preenchimento -> aceita cor hex, ex.: this.fill = "#4592af"
     this.stroke = black; //cor da borda -> aceita cor hex, ex.: this.stroke = "#a34a28"
-    this.name = "";
+    this.name = "BOX";
 }
-
 
 Box.prototype.setName = function(name) {
     this.name = name;
@@ -69,3 +68,62 @@ Box.prototype.draw = function(canvas = ctx) { //requer o contexto de desenho
 
 //TODO: Faça o objeto Circulo implementando as mesmas funcões e atributos que a caixa possui
 //      porém os valores básicos são o centro e o raio do circulo
+
+function Circle(center = [0, 0], height = 0, width = 0, radius=30){
+
+    this.center = center;
+    this.height = height;
+    this.width = width;
+    this.radius = radius;
+    this.T = identity(); //matriz 3x3 de translação 
+    this.R = identity(); //matriz 3x3 de rotação
+    this.S = identity(); //matriz 3x3 de escala
+    this.fill = white; //cor de preenchimento -> aceita cor hex, ex.: this.fill = "#4592af"
+    this.stroke = black; //cor da borda -> aceita cor hex, ex.: this.stroke = "#a34a28"
+    this.name = "CIRC";
+}
+
+Circle.prototype.setName = function(name) {
+    this.name = name;
+}
+
+Circle.prototype.setTranslate = function(x, y) {
+    this.T = translate(x, y);
+}
+
+//TODO: Aplicar matriz de rotação
+Circle.prototype.setRotate = function(theta) {
+    this.radius = theta;
+    this.R = rotate(theta);
+}
+
+//TODO: Aplicar matriz de escala
+Circle.prototype.setScale = function(x, y) {
+    this.S = scale(x, y);
+}
+
+Circle.prototype.draw = function(canvas = ctx){ //requer o contexto de desenho
+    //pega matriz de tranformação de coordenadas canônicas para coordenadas do canvas
+    var M = transformCanvas(WIDTH, HEIGHT);
+    var Mg = mult(M, mult(mult(this.R, this.S), this.T));
+    canvas.lineWidth = 2; //largura da borda
+    canvas.strokeStyle = this.stroke;
+    canvas.fillStyle = this.fill;
+
+    var angle = 0;
+    angle = this.radius * Math.PI/180;
+
+    var points = [];
+    points.push([this.center[0] + this.width / 2, this.center[1] + this.height / 2, 1]);
+
+    ctx.beginPath();
+    for (i = 0; i < points.length; i++) {
+        points[i] = multVec(Mg, points[i]); //transformando o ponto em coordenadas canonicas em coordenadas do canvas
+        canvas.moveTo(points[i][0], points[i][1]);
+        canvas.arc(points[i][0], points[i][1], 30, -angle, 2*Math.PI, false);
+    }
+    canvas.fill(); //aplica cor de preenchimento
+    canvas.strokeStyle = this.stroke;
+    canvas.stroke(); //aplica cor de contorno
+
+}
